@@ -1,0 +1,71 @@
+<project name="wordPlay" default="compile_all" basedir="..">
+
+  <property name="BUILD.compiler"       value="modern"/>
+  <property name="src"                  value="src"/>
+  <property name="BUILD"                value="src/BUILD"/>
+  <property name="classes"              value="${BUILD}/classes"/>
+  <property name="doc"              	value="${BUILD}/doc"/>
+
+
+  <target name="all" depends="compile_all"/>
+
+  <target name="compile_all"
+          depends="wordPlay"/>
+
+  <target name="clean">
+       <delete dir="${BUILD}"/>
+  </target>
+
+  <!-- Prepare target directories -->
+  <target name="prepare">
+        <mkdir dir="${BUILD}"/>
+        <mkdir dir="${classes}"/>
+        <mkdir dir="${doc}"/>
+  </target>
+
+ <target name="jar">
+        <mkdir dir="${BUILD}/jar"/>
+        <jar destfile="${BUILD}/jar/wordPlay.jar" basedir="${BUILD}/classes">
+            <manifest>
+                <attribute name="Main-Class" value="wordPlay.driver.Driver"/>
+            </manifest>
+        </jar>
+    </target>
+
+  <!-- ** means all subdirectories as well -->
+  <!-- * means all files in the current directory -->
+  <!-- for just java files use *.java -->
+
+  <target name="wordPlay" depends="prepare">
+    <javac includeantruntime="false" srcdir="${src}"
+	           includes="wordPlay/**"
+           excludes="**/package.html"
+           destdir="${classes}"
+           classpath="${classes}"
+           debug="on"
+           optimize="on"
+           deprecation="off"/>
+  </target>
+
+  
+<target name="run" depends="jar">
+        <java jar="${BUILD}/jar/wordPlay.jar"  fork="true">
+	<arg value="${input}"/> <!-- input file -->
+	<arg value="${output}"/> <!-- output file -->
+        <arg value="${metrics}"/> <!-- metrics file -->
+        </java>	
+    </target>
+
+
+<!-- Generate javadocs for current project into ${doc.dir} -->
+  <target name="doc">
+    <javadoc packagenames="wordPlay.*" sourcepath="${src}" windowtitle="wordPlay" destdir="${BUILD}/doc/">
+			<doctitle>wordPlay</doctitle>
+			<group title="util packages" packages="wordPlay.util.*" />
+			<group title="driver packages" packages="wordPlay.driver.*" />
+			<group title="wordPlay class" packages="wordPlay.WordPlay" />
+			<group title="Metrics class" packages="wordPlay.AvgCount" />
+		</javadoc>
+  </target>
+
+</project>
